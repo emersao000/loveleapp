@@ -16,19 +16,19 @@ const LoveleLogo = ({ size = 120 }) => (
         <Stop offset="100%" stopColor="#8B2E5C" stopOpacity="1" />
       </SvgGradient>
     </Defs>
-    
+
     {/* Letra L estilizada */}
     <Path
       d="M 60,40 L 80,40 L 80,140 L 140,140 L 140,160 L 60,160 Z"
       fill="url(#logoGrad)"
     />
-    
+
     {/* Coração integrado no topo do L */}
     <Path
       d="M 100,50 C 100,50 90,40 80,40 C 70,40 65,48 65,55 C 65,70 100,95 100,95 C 100,95 135,70 135,55 C 135,48 130,40 120,40 C 110,40 100,50 100,50 Z"
       fill="url(#logoGrad)"
     />
-    
+
     {/* Círculo decorativo */}
     <Circle cx="155" cy="65" r="8" fill="#FF6B9D" opacity="0.6" />
     <Circle cx="145" cy="85" r="5" fill="#C44569" opacity="0.4" />
@@ -52,12 +52,12 @@ const SocialNetworkIllustration = () => (
         <Stop offset="100%" stopColor="#1B9CFC" stopOpacity="0.6" />
       </SvgGradient>
     </Defs>
-    
+
     {/* Linhas de conexão suaves */}
     <Path d="M 80,100 Q 200,140 320,100" stroke="url(#connect1)" strokeWidth="2" fill="none" opacity="0.3" />
     <Path d="M 80,100 Q 140,200 200,240" stroke="url(#connect2)" strokeWidth="2" fill="none" opacity="0.3" />
     <Path d="M 320,100 Q 260,200 200,240" stroke="url(#connect3)" strokeWidth="2" fill="none" opacity="0.3" />
-    
+
     {/* Avatar 1 - Topo Esquerdo */}
     <G>
       <Circle cx="80" cy="100" r="35" fill="url(#connect1)" />
@@ -65,7 +65,7 @@ const SocialNetworkIllustration = () => (
       <Circle cx="80" cy="90" r="12" fill="url(#connect1)" />
       <Path d="M 60,110 Q 80,105 100,110 Q 100,125 80,130 Q 60,125 60,110" fill="url(#connect1)" />
     </G>
-    
+
     {/* Avatar 2 - Topo Direito */}
     <G>
       <Circle cx="320" cy="100" r="35" fill="url(#connect2)" />
@@ -73,7 +73,7 @@ const SocialNetworkIllustration = () => (
       <Circle cx="320" cy="90" r="12" fill="url(#connect2)" />
       <Path d="M 300,110 Q 320,105 340,110 Q 340,125 320,130 Q 300,125 300,110" fill="url(#connect2)" />
     </G>
-    
+
     {/* Avatar 3 - Centro Inferior */}
     <G>
       <Circle cx="200" cy="240" r="35" fill="url(#connect3)" />
@@ -81,16 +81,16 @@ const SocialNetworkIllustration = () => (
       <Circle cx="200" cy="230" r="12" fill="url(#connect3)" />
       <Path d="M 180,250 Q 200,245 220,250 Q 220,265 200,270 Q 180,265 180,250" fill="url(#connect3)" />
     </G>
-    
+
     {/* Ícones flutuantes - Curtidas */}
     <G opacity="0.7">
       <Path d="M 150,60 C 150,60 145,55 140,55 C 135,55 133,58 133,61 C 133,68 150,80 150,80 C 150,80 167,68 167,61 C 167,58 165,55 160,55 C 155,55 150,60 150,60 Z" fill="#FF6B9D" />
     </G>
-    
+
     <G opacity="0.7">
       <Path d="M 250,180 C 250,180 245,175 240,175 C 235,175 233,178 233,181 C 233,188 250,200 250,200 C 250,200 267,188 267,181 C 267,178 265,175 260,175 C 255,175 250,180 250,180 Z" fill="#FEA47F" />
     </G>
-    
+
     {/* Bolhas decorativas */}
     <Circle cx="350" cy="200" r="6" fill="#25CCF7" opacity="0.4" />
     <Circle cx="50" cy="180" r="8" fill="#FF6B9D" opacity="0.3" />
