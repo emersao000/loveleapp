@@ -1,640 +1,1100 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image, Dimensions, FlatList } from 'react-native';
+import React, { useState, useRef } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+  Image,
+  FlatList,
+  Platform,
+  SafeAreaView,
+  Animated,
+  ScrollView,
+} from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
-import { useAuth } from '../../hooks/useAuth';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import Svg, { Defs, LinearGradient as SvgGradient, Stop, Rect } from 'react-native-svg';
+import { Ionicons, Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import Svg, { Circle, Path, Defs, LinearGradient as SvgGradient, Stop } from 'react-native-svg';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
-// Dados de Stories Inovadores
-const innovativeStories = [
-  {
-    id: 1,
-    name: 'Seu Story',
-    subtitle: 'Toque aqui',
-    gradient: ['#FF6B9D', '#FF8FAC'],
-    icon: '➕',
-    type: 'create',
-  },
-  {
-    id: 2,
-    name: 'Marina',
-    subtitle: 'Viagem em alta',
-    gradient: ['#FF6B9D', '#C44569'],
-    hasNew: true,
-    views: 234,
-  },
-  {
-    id: 3,
-    name: 'Lucas',
-    subtitle: 'Novo projeto',
-    gradient: ['#FF8A80', '#D32F2F'],
-    hasNew: true,
-    views: 567,
-  },
-  {
-    id: 4,
-    name: 'Beatriz',
-    subtitle: 'Momentos',
-    gradient: ['#AB47BC', '#7B1FA2'],
-    hasNew: false,
-    views: 89,
-  },
-  {
-    id: 5,
-    name: 'Pedro',
-    subtitle: 'Em direto',
-    gradient: ['#29B6F6', '#1976D2'],
-    hasNew: true,
-    views: 1234,
-  },
-];
+// ==========================================
+// 🎨 LOGO LOVELE SVG
+// ==========================================
+const LoveleLogo = ({ size = 32 }) => (
+  <Svg width={size} height={size} viewBox="0 0 200 200">
+    <Defs>
+      <SvgGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <Stop offset="0%" stopColor="#FF6B9D" stopOpacity="1" />
+        <Stop offset="50%" stopColor="#C44569" stopOpacity="1" />
+        <Stop offset="100%" stopColor="#8B2E5C" stopOpacity="1" />
+      </SvgGradient>
+    </Defs>
 
-// Dados de Posts Inovadores
-const innovativePosts = [
+    <Path
+      d="M 60,40 L 80,40 L 80,140 L 140,140 L 140,160 L 60,160 Z"
+      fill="url(#logoGrad)"
+    />
+
+    <Path
+      d="M 100,50 C 100,50 90,40 80,40 C 70,40 65,48 65,55 C 65,70 100,95 100,95 C 100,95 135,70 135,55 C 135,48 130,40 120,40 C 110,40 100,50 100,50 Z"
+      fill="url(#logoGrad)"
+    />
+
+    <Circle cx="155" cy="65" r="8" fill="#FF6B9D" opacity="0.6" />
+    <Circle cx="145" cy="85" r="5" fill="#C44569" opacity="0.4" />
+  </Svg>
+);
+
+// ==========================================
+// 📊 MOCK DATA
+// ==========================================
+const FEED_DATA = [
   {
-    id: 1,
-    user: { name: 'Ana Silva', avatar: '👩' },
-    title: 'Descoberta Incrível',
-    preview: 'Encontrei um lugar absolutamente incrível na praia que você não vai acreditar...',
-    gradient: ['#FF6B9D', '#C44569'],
-    icon: '🌊',
-    likes: 1234,
-    comments: 89,
+    id: '1',
+    type: 'momento',
+    user: {
+      name: 'Carolina Mendes',
+      username: 'carolmends',
+      avatar: 'https://i.pravatar.cc/150?img=5',
+      verified: true,
+    },
+    content: {
+      text: 'Às vezes precisamos apenas de um café e uma conversa sincera para entender que está tudo bem não estar bem ☕✨',
+      image: 'https://picsum.photos/600/800?random=1',
+    },
+    expiresIn: 22,
     timestamp: '2h',
-    verified: true,
+    likes: 2847,
+    comments: 189,
+    isLiked: false,
+    isSaved: false,
   },
   {
-    id: 2,
-    user: { name: 'João Pedro', avatar: '👨' },
-    title: 'Novo Projeto',
-    preview: 'Lançamos algo que vamos revolucionar toda a indústria de tecnologia...',
-    gradient: ['#FF8A80', '#D32F2F'],
-    icon: '🚀',
-    likes: 856,
-    comments: 42,
-    timestamp: '5h',
-    verified: false,
+    id: '2',
+    type: 'recado',
+    from: {
+      name: 'Rafael Costa',
+      username: 'rafaelc',
+      avatar: 'https://i.pravatar.cc/150?img=12',
+      verified: false,
+    },
+    to: {
+      name: 'Mariana Silva',
+      username: 'marisilva',
+      avatar: 'https://i.pravatar.cc/150?img=10',
+    },
+    content: {
+      text: 'Obrigado por acreditar em mim quando nem eu mesmo acreditava. Sua amizade é meu porto seguro 🌟',
+    },
+    timestamp: '4h',
+    likes: 1567,
+    comments: 67,
+    isLiked: false,
   },
   {
-    id: 3,
-    user: { name: 'Maria Clara', avatar: '👧' },
-    title: 'Workshop Exclusivo',
-    preview: 'Aprenda as melhores técnicas de design com os melhores profissionais...',
-    gradient: ['#AB47BC', '#7B1FA2'],
-    icon: '🎨',
-    likes: 456,
-    comments: 23,
+    id: '3',
+    type: 'momento',
+    user: {
+      name: 'Lucas Mendes',
+      username: 'lucasm',
+      avatar: 'https://i.pravatar.cc/150?img=13',
+      verified: true,
+    },
+    content: {
+      text: 'Começar de novo não é fracasso. É coragem de escrever um novo capítulo da sua história 📖✨',
+      image: 'https://picsum.photos/600/800?random=3',
+    },
+    expiresIn: 18,
+    timestamp: '6h',
+    likes: 3201,
+    comments: 234,
+    isLiked: false,
+    isSaved: false,
+  },
+  {
+    id: '4',
+    type: 'recado',
+    from: {
+      name: 'Ana Paula',
+      username: 'anapaula',
+      avatar: 'https://i.pravatar.cc/150?img=1',
+      verified: true,
+    },
+    to: {
+      name: 'Pedro Henrique',
+      username: 'pedroh',
+      avatar: 'https://i.pravatar.cc/150?img=11',
+    },
+    content: {
+      text: 'Você fez meu dia especial só por existir. Gratidão eterna! 💖',
+    },
     timestamp: '8h',
-    verified: false,
-  },
-  {
-    id: 4,
-    user: { name: 'Carlos Lima', avatar: '🧑' },
-    title: 'Viagem Épica',
-    preview: 'Atravessei o país inteiro em apenas uma semana, confira o resultado...',
-    gradient: ['#29B6F6', '#1976D2'],
-    icon: '✈️',
-    likes: 2345,
-    comments: 156,
-    timestamp: '12h',
-    verified: true,
+    likes: 892,
+    comments: 34,
+    isLiked: false,
   },
 ];
 
-// Card de Story Inovador
-const StoryCard = ({ story, onPress }: any) => {
-  return (
-    <TouchableOpacity style={styles.storyCard} onPress={onPress} activeOpacity={0.8}>
-      <Svg style={styles.storyGradientBg} height="100%" width="100%">
-        <Defs>
-          <SvgGradient id={`storyGrad${story.id}`} x1="0%" y1="0%" x2="100%" y2="100%">
-            <Stop offset="0%" stopColor={story.gradient[0]} stopOpacity="1" />
-            <Stop offset="100%" stopColor={story.gradient[1]} stopOpacity="0.8" />
-          </SvgGradient>
-        </Defs>
-        <Rect width="100%" height="100%" fill={`url(#storyGrad${story.id})`} rx="20" />
-      </Svg>
+// ==========================================
+// 🎴 CARD DE MOMENTO - LAYOUT DIFERENCIADO
+// ==========================================
+const MomentoCard = ({ item, onLike, onSave }: any) => {
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const [showHeart, setShowHeart] = useState(false);
+  const heartAnim = useRef(new Animated.Value(0)).current;
 
-      <View style={styles.storyContent}>
-        {story.type === 'create' ? (
-          <View style={styles.storyCreateButton}>
-            <Text style={styles.storyIcon}>{story.icon}</Text>
-          </View>
-        ) : (
-          <>
-            {story.hasNew && <View style={styles.storyBadge} />}
-            <Text style={styles.storyBigIcon}>📌</Text>
-            <Text style={styles.storyName} numberOfLines={1}>
-              {story.name}
-            </Text>
-            <Text style={styles.storySubtitle} numberOfLines={1}>
-              {story.subtitle}
-            </Text>
-            {story.views && (
-              <Text style={styles.storyViews}>👁️ {story.views}</Text>
-            )}
-          </>
-        )}
-      </View>
-    </TouchableOpacity>
-  );
-};
+  const handleDoubleTap = () => {
+    if (!item.isLiked) {
+      onLike(item.id);
+      setShowHeart(true);
 
-// Card de Post Inovador
-const PostCard = ({ post, onLike }: any) => {
-  const [liked, setLiked] = useState(false);
+      Animated.sequence([
+        Animated.spring(heartAnim, {
+          toValue: 1,
+          friction: 3,
+          useNativeDriver: true,
+        }),
+        Animated.timing(heartAnim, {
+          toValue: 0,
+          delay: 800,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start(() => setShowHeart(false));
+    }
+  };
 
   const handleLike = () => {
-    setLiked(!liked);
+    Animated.sequence([
+      Animated.timing(scaleAnim, {
+        toValue: 1.3,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        friction: 3,
+        useNativeDriver: true,
+      }),
+    ]).start();
+    onLike(item.id);
   };
 
   return (
-    <View style={styles.postContainer}>
-      <Svg style={styles.postGradient} height="100%" width="100%">
-        <Defs>
-          <SvgGradient id={`postGrad${post.id}`} x1="0%" y1="0%" x2="100%" y2="100%">
-            <Stop offset="0%" stopColor={post.gradient[0]} stopOpacity="0.15" />
-            <Stop offset="100%" stopColor={post.gradient[1]} stopOpacity="0.05" />
-          </SvgGradient>
-        </Defs>
-        <Rect width="100%" height="100%" fill={`url(#postGrad${post.id})`} rx="24" />
-      </Svg>
-
-      <TouchableOpacity style={styles.postCard} activeOpacity={0.7}>
-        <View style={styles.postHeader}>
-          <View style={styles.postIconCircle}>
-            <Text style={styles.postMainIcon}>{post.icon}</Text>
-          </View>
-
-          <View style={styles.postHeaderRight}>
-            <View style={styles.postUserRow}>
-              <Text style={styles.postAvatar}>{post.user.avatar}</Text>
-              <View>
-                <View style={styles.postNameRow}>
-                  <Text style={styles.postUserName}>{post.user.name}</Text>
-                  {post.verified && <Text style={styles.verifiedBadge}>✓</Text>}
-                </View>
-                <Text style={styles.postTime}>{post.timestamp}</Text>
+    <View style={styles.momentoCard}>
+      <View style={styles.momentoContainer}>
+        {/* Header Compacto */}
+        <View style={styles.momentoHeader}>
+          <View style={styles.userSection}>
+            <LinearGradient
+              colors={['#FF6B9D', '#C44569']}
+              style={styles.avatarGradient}
+            >
+              <View style={styles.avatarBorder}>
+                <Image source={{ uri: item.user.avatar }} style={styles.avatarImg} />
               </View>
+            </LinearGradient>
+
+            <View style={styles.userInfo}>
+              <View style={styles.nameRow}>
+                <Text style={styles.username}>{item.user.username}</Text>
+                {item.user.verified && (
+                  <Ionicons name="checkmark-circle" size={14} color="#3B82F6" />
+                )}
+              </View>
+              <Text style={styles.timestamp}>{item.timestamp}</Text>
             </View>
-            <TouchableOpacity style={styles.menuButton}>
-              <MaterialCommunityIcons name="dots-vertical" size={20} color="#636E72" />
+          </View>
+
+          {item.expiresIn && (
+            <View style={styles.timerBadge}>
+              <Ionicons name="time-outline" size={14} color="#FF6B9D" />
+              <Text style={styles.timerText}>{item.expiresIn}h</Text>
+            </View>
+          )}
+        </View>
+
+        {/* Texto do Momento */}
+        <View style={styles.momentoTextContainer}>
+          <Text style={styles.momentoText}>{item.content.text}</Text>
+        </View>
+
+        {/* Imagem com Cantos Arredondados */}
+        {item.content.image && (
+          <TouchableOpacity
+            activeOpacity={0.9}
+            onPress={handleDoubleTap}
+            style={styles.imageWrapper}
+          >
+            <Image
+              source={{ uri: item.content.image }}
+              style={styles.momentoImage}
+              resizeMode="cover"
+            />
+
+            {/* Overlay Gradiente Sutil */}
+            <LinearGradient
+              colors={['transparent', 'rgba(0,0,0,0.3)']}
+              style={styles.imageOverlay}
+            />
+
+            {/* Ícone de Timer na Imagem */}
+            {item.expiresIn && (
+              <View style={styles.imageTimer}>
+                <Ionicons name="hourglass-outline" size={16} color="#FFFFFF" />
+              </View>
+            )}
+
+            {/* Double Tap Heart Animation */}
+            {showHeart && (
+              <Animated.View
+                style={[
+                  styles.heartAnimation,
+                  {
+                    opacity: heartAnim,
+                    transform: [{ scale: heartAnim }],
+                  },
+                ]}
+              >
+                <Ionicons name="heart" size={80} color="#FFFFFF" />
+              </Animated.View>
+            )}
+          </TouchableOpacity>
+        )}
+
+        {/* Barra de Progresso do Tempo */}
+        {item.expiresIn && (
+          <View style={styles.progressBarContainer}>
+            <LinearGradient
+              colors={['#FF6B9D', '#C44569']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={[
+                styles.progressBar,
+                { width: `${((24 - item.expiresIn) / 24) * 100}%` },
+              ]}
+            />
+          </View>
+        )}
+
+        {/* Footer com Estatísticas */}
+        <View style={styles.momentoFooter}>
+          <View style={styles.statsRow}>
+            <View style={styles.statItem}>
+              <Ionicons name="heart" size={16} color="#FF6B9D" />
+              <Text style={styles.statNumber}>{item.likes.toLocaleString('pt-BR')}</Text>
+            </View>
+            <View style={styles.statItem}>
+              <Ionicons name="chatbubble" size={16} color="#8E8E93" />
+              <Text style={styles.statNumber}>{item.comments}</Text>
+            </View>
+          </View>
+
+          <View style={styles.actionsRow}>
+            <TouchableOpacity onPress={handleLike} activeOpacity={0.7} style={styles.actionBtn}>
+              <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+                <Ionicons
+                  name={item.isLiked ? 'heart' : 'heart-outline'}
+                  size={24}
+                  color={item.isLiked ? '#FF3B30' : '#1A1A1A'}
+                />
+              </Animated.View>
+            </TouchableOpacity>
+
+            <TouchableOpacity activeOpacity={0.7} style={styles.actionBtn}>
+              <Ionicons name="chatbubble-outline" size={22} color="#1A1A1A" />
+            </TouchableOpacity>
+
+            <TouchableOpacity activeOpacity={0.7} style={styles.actionBtn}>
+              <MaterialCommunityIcons name="share-outline" size={24} color="#1A1A1A" />
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => onSave(item.id)} activeOpacity={0.7} style={styles.actionBtn}>
+              <Ionicons
+                name={item.isSaved ? 'bookmark' : 'bookmark-outline'}
+                size={22}
+                color={item.isSaved ? '#FF6B9D' : '#1A1A1A'}
+              />
             </TouchableOpacity>
           </View>
         </View>
-
-        <View style={styles.postBody}>
-          <Text style={styles.postTitle}>{post.title}</Text>
-          <Text style={styles.postPreview} numberOfLines={2}>
-            {post.preview}
-          </Text>
-        </View>
-
-        <View style={styles.postFooter}>
-          <View style={styles.postStats}>
-            <TouchableOpacity style={styles.statItem} onPress={handleLike}>
-              <Text style={styles.statIcon}>{liked ? '❤️' : '🤍'}</Text>
-              <Text style={styles.statText}>{liked ? post.likes + 1 : post.likes}</Text>
-            </TouchableOpacity>
-            <View style={styles.statItem}>
-              <MaterialCommunityIcons name="chat-outline" size={18} color="#636E72" />
-              <Text style={styles.statText}>{post.comments}</Text>
-            </View>
-            <View style={styles.statItem}>
-              <MaterialCommunityIcons name="share-outline" size={18} color="#636E72" />
-              <Text style={styles.statText}>Compartilhar</Text>
-            </View>
-          </View>
-        </View>
-      </TouchableOpacity>
+      </View>
     </View>
   );
 };
 
+// ==========================================
+// 💌 CARD DE RECADO
+// ==========================================
+const RecadoCard = ({ item, onLike }: any) => {
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  const handleLike = () => {
+    Animated.sequence([
+      Animated.timing(scaleAnim, {
+        toValue: 1.3,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        friction: 3,
+        useNativeDriver: true,
+      }),
+    ]).start();
+    onLike(item.id);
+  };
+
+  return (
+    <View style={styles.recadoCard}>
+      <LinearGradient colors={['#FFF5F7', '#FFFFFF']} style={styles.recadoContainer}>
+        {/* Header */}
+        <View style={styles.recadoHeader}>
+          <View style={styles.recadoConnection}>
+            <View style={styles.avatarStack}>
+              <Image source={{ uri: item.from.avatar }} style={styles.stackAvatar1} />
+              <View style={styles.arrowBadge}>
+                <Ionicons name="arrow-forward" size={12} color="#FFFFFF" />
+              </View>
+              <Image source={{ uri: item.to.avatar }} style={styles.stackAvatar2} />
+            </View>
+
+            <View style={styles.recadoUsers}>
+              <View style={styles.recadoUserRow}>
+                <Text style={styles.recadoFromName}>{item.from.username}</Text>
+                {item.from.verified && (
+                  <Ionicons name="checkmark-circle" size={14} color="#3B82F6" />
+                )}
+              </View>
+              <View style={styles.recadoArrowRow}>
+                <Ionicons name="arrow-forward" size={14} color="#FF6B9D" />
+              </View>
+              <Text style={styles.recadoToName}>{item.to.username}</Text>
+            </View>
+          </View>
+
+          <TouchableOpacity>
+            <Feather name="more-horizontal" size={24} color="#1A1A1A" />
+          </TouchableOpacity>
+        </View>
+
+        {/* Message Card */}
+        <View style={styles.messageCard}>
+          <View style={styles.quoteIconTop}>
+            <Ionicons name="chatbubble-ellipses" size={24} color="#FF6B9D" opacity={0.3} />
+          </View>
+          <Text style={styles.messageContent}>{item.content.text}</Text>
+          <View style={styles.quoteIconBottom}>
+            <Ionicons name="chatbubble-ellipses" size={24} color="#FF6B9D" opacity={0.3} />
+          </View>
+        </View>
+
+        {/* Actions */}
+        <View style={styles.recadoFooter}>
+          <View style={styles.recadoStats}>
+            <View style={styles.statItem}>
+              <Ionicons name="heart" size={14} color="#FF6B9D" />
+              <Text style={styles.statNumber}>{item.likes.toLocaleString('pt-BR')}</Text>
+            </View>
+            <View style={styles.statItem}>
+              <Ionicons name="chatbubble" size={14} color="#8E8E93" />
+              <Text style={styles.statNumber}>{item.comments}</Text>
+            </View>
+          </View>
+
+          <View style={styles.recadoActions}>
+            <TouchableOpacity
+              style={styles.actionBtn}
+              onPress={handleLike}
+              activeOpacity={0.7}
+            >
+              <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+                <Ionicons
+                  name={item.isLiked ? 'heart' : 'heart-outline'}
+                  size={22}
+                  color={item.isLiked ? '#FF3B30' : '#65676B'}
+                />
+              </Animated.View>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.actionBtn} activeOpacity={0.7}>
+              <Ionicons name="chatbubble-outline" size={20} color="#65676B" />
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.actionBtn} activeOpacity={0.7}>
+              <MaterialCommunityIcons name="share-outline" size={22} color="#65676B" />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <Text style={styles.recadoTimestamp}>{item.timestamp}</Text>
+      </LinearGradient>
+    </View>
+  );
+};
+
+// ==========================================
+// 🏠 TELA PRINCIPAL
+// ==========================================
 export const HomeScreen = () => {
-  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('home');
+  const [feedFilter, setFeedFilter] = useState('todos');
+  const [feedData, setFeedData] = useState(FEED_DATA);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleLike = (postId: string) => {
+    setFeedData((prev) =>
+      prev.map((item) =>
+        item.id === postId
+          ? {
+              ...item,
+              isLiked: !item.isLiked,
+              likes: item.isLiked ? item.likes - 1 : item.likes + 1,
+            }
+          : item
+      )
+    );
+  };
+
+  const handleSave = (postId: string) => {
+    setFeedData((prev) =>
+      prev.map((item) =>
+        item.id === postId ? { ...item, isSaved: !item.isSaved } : item
+      )
+    );
+  };
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    setTimeout(() => setRefreshing(false), 1500);
+  };
+
+  const getFilteredData = () => {
+    if (feedFilter === 'momentos') {
+      return feedData.filter((item) => item.type === 'momento');
+    }
+    if (feedFilter === 'recados') {
+      return feedData.filter((item) => item.type === 'recado');
+    }
+    return feedData;
+  };
+
+  const renderItem = ({ item }: any) => {
+    if (item.type === 'momento') {
+      return <MomentoCard item={item} onLike={handleLike} onSave={handleSave} />;
+    }
+    return <RecadoCard item={item} onLike={handleLike} />;
+  };
 
   return (
     <View style={styles.container}>
       <StatusBar style="dark" />
 
-      {/* Header Premium */}
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.greeting}>Olá, {user?.name?.split(' ')[0]}! 👋</Text>
-          <Text style={styles.logo}>Lovele</Text>
-        </View>
-        <TouchableOpacity style={styles.notificationButton}>
-          <MaterialCommunityIcons name="bell-outline" size={28} color="#FF6B9D" />
-          <View style={styles.notificationBadge}>
-            <Text style={styles.badgeText}>3</Text>
+      {/* Safe Area para Header */}
+      <SafeAreaView style={styles.safeAreaTop}>
+        {/* Header */}
+        <View style={styles.header}>
+          <View style={styles.logoContainer}>
+            <LoveleLogo size={36} />
+            <Text style={styles.logoText}>Lovele</Text>
           </View>
-        </TouchableOpacity>
-      </View>
 
-      {/* Main Scroll */}
-      <ScrollView
-        style={styles.scrollView}
-        showsVerticalScrollIndicator={false}
-        scrollEventThrottle={16}
-      >
-        {/* Seção de Stories Inovadora */}
-        <View style={styles.storiesSection}>
-          <Text style={styles.sectionTitle}>Seus Stories</Text>
+          <TouchableOpacity style={styles.iconBtn}>
+            <View style={styles.notifBadge}>
+              <Text style={styles.notifBadgeText}>3</Text>
+            </View>
+            <Ionicons name="notifications-outline" size={26} color="#1A1A1A" />
+          </TouchableOpacity>
+        </View>
+
+        {/* Filter Tabs */}
+        <View style={styles.filterContainer}>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.storiesScroll}
-            scrollEventThrottle={16}
+            contentContainerStyle={styles.filterScroll}
           >
-            {innovativeStories.map((story) => (
-              <StoryCard key={story.id} story={story} onPress={() => {}} />
-            ))}
+            <TouchableOpacity
+              style={[styles.filterTab, feedFilter === 'todos' && styles.filterTabActive]}
+              onPress={() => setFeedFilter('todos')}
+            >
+              <Text style={[styles.filterText, feedFilter === 'todos' && styles.filterTextActive]}>
+                Todos
+              </Text>
+              {feedFilter === 'todos' && <View style={styles.filterIndicator} />}
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.filterTab, feedFilter === 'momentos' && styles.filterTabActive]}
+              onPress={() => setFeedFilter('momentos')}
+            >
+              <Ionicons
+                name="time-outline"
+                size={16}
+                color={feedFilter === 'momentos' ? '#FF6B9D' : '#8E8E93'}
+                style={{ marginRight: 6 }}
+              />
+              <Text style={[styles.filterText, feedFilter === 'momentos' && styles.filterTextActive]}>
+                Momentos
+              </Text>
+              {feedFilter === 'momentos' && <View style={styles.filterIndicator} />}
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.filterTab, feedFilter === 'recados' && styles.filterTabActive]}
+              onPress={() => setFeedFilter('recados')}
+            >
+              <Ionicons
+                name="chatbubble-ellipses-outline"
+                size={16}
+                color={feedFilter === 'recados' ? '#FF6B9D' : '#8E8E93'}
+                style={{ marginRight: 6 }}
+              />
+              <Text style={[styles.filterText, feedFilter === 'recados' && styles.filterTextActive]}>
+                Recados
+              </Text>
+              {feedFilter === 'recados' && <View style={styles.filterIndicator} />}
+            </TouchableOpacity>
           </ScrollView>
         </View>
+      </SafeAreaView>
 
-        {/* Seção de Posts Inovadora */}
-        <View style={styles.postsSection}>
-          <Text style={styles.sectionTitle}>Suas Descobertas</Text>
-          <View style={styles.postsContainer}>
-            {innovativePosts.map((post) => (
-              <PostCard key={post.id} post={post} />
-            ))}
+      {/* Feed */}
+      <FlatList
+        data={getFilteredData()}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+        showsVerticalScrollIndicator={false}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
+        contentContainerStyle={styles.feedList}
+        ListEmptyComponent={
+          <View style={styles.emptyState}>
+            <Ionicons
+              name={feedFilter === 'momentos' ? 'time-outline' : 'chatbubble-ellipses-outline'}
+              size={64}
+              color="#DBDBDB"
+            />
+            <Text style={styles.emptyText}>
+              {feedFilter === 'momentos' ? 'Nenhum momento por aqui ainda' : 'Nenhum recado por aqui ainda'}
+            </Text>
           </View>
-        </View>
+        }
+      />
 
-        <View style={styles.spacer} />
-      </ScrollView>
-
-      {/* Bottom Navigation - Premium com Icons Nativos */}
+      {/* Bottom Navigation */}
       <View style={styles.bottomNav}>
-        <TouchableOpacity
-          style={[styles.navButton, activeTab === 'home' && styles.navButtonActive]}
-          onPress={() => setActiveTab('home')}
-        >
-          <MaterialCommunityIcons
-            name="home"
-            size={26}
-            color={activeTab === 'home' ? '#FF6B9D' : '#B2BEC3'}
+        <TouchableOpacity style={styles.navBtn} onPress={() => setActiveTab('home')}>
+          <Ionicons
+            name={activeTab === 'home' ? 'home' : 'home-outline'}
+            size={28}
+            color={activeTab === 'home' ? '#1A1A1A' : '#8E8E93'}
           />
-          <View style={activeTab === 'home' ? styles.navIndicator : null} />
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.navButton, activeTab === 'search' && styles.navButtonActive]}
-          onPress={() => setActiveTab('search')}
-        >
-          <MaterialCommunityIcons
-            name="magnify"
-            size={26}
-            color={activeTab === 'search' ? '#FF6B9D' : '#B2BEC3'}
+        <TouchableOpacity style={styles.navBtn} onPress={() => setActiveTab('search')}>
+          <Ionicons
+            name={activeTab === 'search' ? 'search' : 'search-outline'}
+            size={28}
+            color={activeTab === 'search' ? '#1A1A1A' : '#8E8E93'}
           />
-          <View style={activeTab === 'search' ? styles.navIndicator : null} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.navButtonCenter}>
-          <View style={styles.addButtonGradient}>
-            <MaterialCommunityIcons name="plus" size={32} color="#FFFFFF" />
+        <TouchableOpacity style={styles.navBtn} onPress={() => setActiveTab('create')}>
+          <View style={styles.createBtn}>
+            <Ionicons name="add" size={28} color="#1A1A1A" />
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.navButton, activeTab === 'messages' && styles.navButtonActive]}
-          onPress={() => setActiveTab('messages')}
-        >
-          <MaterialCommunityIcons
-            name="heart-outline"
-            size={26}
-            color={activeTab === 'messages' ? '#FF6B9D' : '#B2BEC3'}
-          />
-          <View style={activeTab === 'messages' ? styles.navIndicator : null} />
+        <TouchableOpacity style={styles.navBtn} onPress={() => setActiveTab('messages')}>
+          <View>
+            <Ionicons
+              name={activeTab === 'messages' ? 'chatbubbles' : 'chatbubbles-outline'}
+              size={28}
+              color={activeTab === 'messages' ? '#1A1A1A' : '#8E8E93'}
+            />
+            <View style={styles.messageBadge}>
+              <Text style={styles.messageBadgeText}>5</Text>
+            </View>
+          </View>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.navButton, activeTab === 'profile' && styles.navButtonActive]}
-          onPress={() => setActiveTab('profile')}
-        >
-          <MaterialCommunityIcons
-            name="account"
-            size={26}
-            color={activeTab === 'profile' ? '#FF6B9D' : '#B2BEC3'}
-          />
-          <View style={activeTab === 'profile' ? styles.navIndicator : null} />
+        <TouchableOpacity style={styles.navBtn} onPress={() => setActiveTab('profile')}>
+          <View style={[styles.profileNav, activeTab === 'profile' && styles.profileNavActive]}>
+            <Image
+              source={{ uri: 'https://i.pravatar.cc/100?img=8' }}
+              style={styles.profileNavImg}
+            />
+          </View>
         </TouchableOpacity>
       </View>
     </View>
   );
 };
 
+// ==========================================
+// 🎨 ESTILOS
+// ==========================================
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FAFBFC',
+    backgroundColor: '#F8F9FA',
   },
+  safeAreaTop: {
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#DBDBDB',
+  },
+
+  // === HEADER ===
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 24,
-    paddingTop: 60,
-    paddingBottom: 20,
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#F1F3F5',
+    paddingHorizontal: 16,
+    paddingTop: Platform.OS === 'android' ? 20 : 0,
+    paddingBottom: 12,
   },
-  greeting: {
-    fontSize: 14,
-    color: '#636E72',
-    marginBottom: 4,
-  },
-  logo: {
-    fontSize: 32,
-    fontWeight: '900',
-    color: '#FF6B9D',
-    letterSpacing: -0.5,
-  },
-  notificationButton: {
-    position: 'relative',
-    padding: 8,
-  },
-  notificationBadge: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    backgroundColor: '#FF3B30',
-    borderRadius: 10,
-    width: 20,
-    height: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  badgeText: {
-    color: '#FFFFFF',
-    fontSize: 10,
-    fontWeight: 'bold',
-  },
-  scrollView: {
-    flex: 1,
-  },
-  storiesSection: {
-    marginTop: 20,
-    marginBottom: 30,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '800',
-    color: '#2D3436',
-    marginBottom: 16,
-    marginHorizontal: 24,
-    letterSpacing: -0.3,
-  },
-  storiesScroll: {
-    paddingHorizontal: 24,
-    gap: 12,
-  },
-  storyCard: {
-    width: 140,
-    height: 180,
-    borderRadius: 20,
-    overflow: 'hidden',
-    backgroundColor: '#F8FAFC',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-  },
-  storyGradientBg: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  storyContent: {
-    flex: 1,
-    padding: 16,
-    justifyContent: 'space-between',
-  },
-  storyBadge: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    width: 12,
-    height: 12,
-    backgroundColor: '#FF6B9D',
-    borderRadius: 6,
-    borderWidth: 2,
-    borderColor: '#FFFFFF',
-  },
-  storyCreateButton: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  storyIcon: {
-    fontSize: 48,
-  },
-  storyBigIcon: {
-    fontSize: 32,
-    marginBottom: 8,
-  },
-  storyName: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#FFFFFF',
-    marginBottom: 4,
-  },
-  storySubtitle: {
-    fontSize: 11,
-    color: '#FFFFFF',
-    opacity: 0.9,
-    marginBottom: 8,
-  },
-  storyViews: {
-    fontSize: 10,
-    color: '#FFFFFF',
-    opacity: 0.8,
-  },
-  postsSection: {
-    marginHorizontal: 24,
-  },
-  postsContainer: {
-    gap: 16,
-  },
-  postContainer: {
-    position: 'relative',
-    marginBottom: 8,
-    borderRadius: 24,
-    overflow: 'hidden',
-  },
-  postGradient: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  postCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 24,
-    padding: 16,
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-  },
-  postHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 12,
-  },
-  postIconCircle: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#F8FAFC',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  postMainIcon: {
-    fontSize: 28,
-  },
-  postHeaderRight: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-  },
-  postUserRow: {
+  logoContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
   },
-  postAvatar: {
-    fontSize: 24,
+  logoText: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#1A1A1A',
+    letterSpacing: -0.5,
   },
-  postNameRow: {
+  iconBtn: {
+    position: 'relative',
+    padding: 8,
+  },
+  notifBadge: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
+    backgroundColor: '#FF3B30',
+    borderRadius: 10,
+    minWidth: 18,
+    height: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+  },
+  notifBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '700',
+  },
+
+  // === FILTER TABS ===
+  filterContainer: {
+    paddingVertical: 8,
+  },
+  filterScroll: {
+    paddingHorizontal: 16,
+    gap: 24,
+  },
+  filterTab: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 4,
+    position: 'relative',
+  },
+  filterTabActive: {},
+  filterText: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#8E8E93',
+  },
+  filterTextActive: {
+    fontWeight: '700',
+    color: '#FF6B9D',
+  },
+  filterIndicator: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 2,
+    backgroundColor: '#FF6B9D',
+    borderRadius: 1,
+  },
+
+  // === FEED ===
+  feedList: {
+    paddingVertical: 16,
+    paddingBottom: 100,
+  },
+  emptyState: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 80,
+  },
+  emptyText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: '#8E8E93',
+  },
+
+  // === MOMENTO CARD ===
+  momentoCard: {
+    marginBottom: 20,
+    paddingHorizontal: 16,
+  },
+  momentoContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 4,
+  },
+  momentoHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    paddingBottom: 12,
+  },
+  userSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  avatarGradient: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    padding: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  avatarBorder: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#FFFFFF',
+    padding: 2,
+  },
+  avatarImg: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 18,
+  },
+  userInfo: {
+    marginLeft: 12,
+  },
+  nameRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
   },
-  postUserName: {
-    fontSize: 13,
+  username: {
+    fontSize: 15,
     fontWeight: '700',
-    color: '#2D3436',
+    color: '#1A1A1A',
   },
-  verifiedBadge: {
+  timestamp: {
     fontSize: 12,
-    color: '#FF6B9D',
-  },
-  postTime: {
-    fontSize: 11,
-    color: '#B2BEC3',
+    color: '#8E8E93',
     marginTop: 2,
   },
-  menuButton: {
-    padding: 4,
-  },
-  postBody: {
-    marginBottom: 12,
-  },
-  postTitle: {
-    fontSize: 16,
-    fontWeight: '800',
-    color: '#2D3436',
-    marginBottom: 6,
-  },
-  postPreview: {
-    fontSize: 13,
-    color: '#636E72',
-    lineHeight: 19,
-  },
-  postFooter: {
-    borderTopWidth: 1,
-    borderTopColor: '#F1F3F5',
-    paddingTop: 12,
-  },
-  postStats: {
+  timerBadge: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    alignItems: 'center',
+    backgroundColor: '#FFF0F5',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    gap: 4,
+  },
+  timerText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#FF6B9D',
+  },
+  momentoTextContainer: {
+    paddingHorizontal: 16,
+    paddingBottom: 12,
+  },
+  momentoText: {
+    fontSize: 15,
+    lineHeight: 22,
+    color: '#1A1A1A',
+  },
+  imageWrapper: {
+    position: 'relative',
+    marginHorizontal: 16,
+    marginBottom: 12,
+    borderRadius: 16,
+    overflow: 'hidden',
+  },
+  momentoImage: {
+    width: '100%',
+    height: width - 64,
+    backgroundColor: '#F0F0F0',
+  },
+  imageOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 100,
+  },
+  imageTimer: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    borderRadius: 20,
+    padding: 8,
+  },
+  heartAnimation: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    marginLeft: -40,
+    marginTop: -40,
+  },
+  progressBarContainer: {
+    height: 3,
+    backgroundColor: '#F0F0F0',
+    marginHorizontal: 16,
+    marginBottom: 12,
+    borderRadius: 1.5,
+    overflow: 'hidden',
+  },
+  progressBar: {
+    height: '100%',
+    borderRadius: 1.5,
+  },
+  momentoFooter: {
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+  },
+  statsRow: {
+    flexDirection: 'row',
+    gap: 16,
+    marginBottom: 12,
   },
   statItem: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
   },
-  statIcon: {
-    fontSize: 18,
+  statNumber: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#1A1A1A',
   },
-  statText: {
-    fontSize: 12,
-    color: '#636E72',
-    fontWeight: '500',
+  actionsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#F0F0F0',
   },
-  spacer: {
-    height: 100,
+  actionBtn: {
+    padding: 8,
   },
+
+  // === RECADO CARD ===
+  recadoCard: {
+    marginBottom: 20,
+    paddingHorizontal: 16,
+  },
+  recadoContainer: {
+    borderRadius: 20,
+    overflow: 'hidden',
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 4,
+  },
+  recadoHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  recadoConnection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  avatarStack: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    position: 'relative',
+    width: 64,
+    height: 40,
+  },
+  stackAvatar1: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+    position: 'absolute',
+    left: 0,
+    zIndex: 2,
+  },
+  arrowBadge: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: '#FF6B9D',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    left: 22,
+    zIndex: 3,
+  },
+  stackAvatar2: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+    position: 'absolute',
+    left: 24,
+    zIndex: 1,
+  },
+  recadoUsers: {
+    marginLeft: 12,
+  },
+  recadoUserRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  recadoFromName: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#1A1A1A',
+  },
+  recadoArrowRow: {
+    marginVertical: 4,
+  },
+  recadoToName: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#FF6B9D',
+  },
+  messageCard: {
+    backgroundColor: 'rgba(255, 107, 157, 0.08)',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 16,
+    position: 'relative',
+  },
+  quoteIconTop: {
+    position: 'absolute',
+    top: 12,
+    left: 12,
+  },
+  quoteIconBottom: {
+    position: 'absolute',
+    bottom: 12,
+    right: 12,
+    transform: [{ rotate: '180deg' }],
+  },
+  messageContent: {
+    fontSize: 15,
+    lineHeight: 24,
+    color: '#1A1A1A',
+    textAlign: 'center',
+    paddingHorizontal: 12,
+  },
+  recadoFooter: {
+    flexDirection: 'column',
+    gap: 12,
+  },
+  recadoStats: {
+    flexDirection: 'row',
+    gap: 16,
+  },
+  recadoActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(0,0,0,0.05)',
+  },
+  recadoTimestamp: {
+    fontSize: 11,
+    color: '#8E8E93',
+    textAlign: 'center',
+    marginTop: 8,
+  },
+
+  // === BOTTOM NAV ===
   bottomNav: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    height: 80,
-    backgroundColor: '#FFFFFF',
-    borderTopWidth: 1,
-    borderTopColor: '#F1F3F5',
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    paddingBottom: 20,
-    elevation: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
+    backgroundColor: '#FFFFFF',
+    paddingTop: 8,
+    paddingBottom: Platform.OS === 'ios' ? 24 : 12,
+    borderTopWidth: 0.5,
+    borderTopColor: '#DBDBDB',
   },
-  navButton: {
+  navBtn: {
     flex: 1,
+    alignItems: 'center',
+  },
+  createBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#1A1A1A',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 8,
   },
-  navButtonActive: {
-    marginTop: 4,
-  },
-  navIndicator: {
-    width: 4,
-    height: 4,
-    backgroundColor: '#FF6B9D',
-    borderRadius: 2,
-    marginTop: 6,
-  },
-  navButtonCenter: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+  messageBadge: {
+    position: 'absolute',
+    top: -5,
+    right: -5,
+    backgroundColor: '#FF3B30',
+    borderRadius: 10,
+    minWidth: 18,
+    height: 18,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 16,
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
   },
-  addButtonGradient: {
+  messageBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  profileNav: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#DBDBDB',
+  },
+  profileNavActive: {
+    borderWidth: 2,
+    borderColor: '#1A1A1A',
+  },
+  profileNavImg: {
     width: '100%',
     height: '100%',
-    borderRadius: 30,
-    backgroundColor: '#FF6B9D',
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 8,
-    shadowColor: '#FF6B9D',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
   },
 });
