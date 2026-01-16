@@ -1,25 +1,10 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { AuthProvider } from './context/AuthContext';
-import { AppNavigator } from './navigation/AppNavigator';
+import { View, Text } from 'react-native';
 
-function NavigationApp() {
+export default function App() {
   return (
-    <NavigationContainer>
-      <AppNavigator />
-    </NavigationContainer>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Testando App!</Text>
+    </View>
   );
 }
-
-function AppRoot() {
-  return (
-    <SafeAreaProvider>
-      <AuthProvider>
-        <NavigationApp />
-      </AuthProvider>
-    </SafeAreaProvider>
-  );
-}
-
-export default AppRoot;
