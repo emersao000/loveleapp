@@ -119,6 +119,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
+  scrollView: {
+    flex: 1,
+  },
   backButton: {
     paddingTop: 60,
     paddingHorizontal: 20,
@@ -129,8 +132,8 @@ const styles = StyleSheet.create({
     color: '#FF6B6B',
   },
   content: {
-    flex: 1,
     padding: 20,
+    paddingBottom: 40,
   },
   title: {
     fontSize: 32,
