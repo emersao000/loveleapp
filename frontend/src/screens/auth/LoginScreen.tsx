@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Alert, ScrollView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useAuth } from '../../hooks/useAuth';
+import { SocialAuthButtons } from '../../components/auth/SocialAuthButtons';
 
 export const LoginScreen = ({ navigation }: any) => {
   const { login } = useAuth();
@@ -25,59 +26,90 @@ export const LoginScreen = ({ navigation }: any) => {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    // Placeholder for Google OAuth implementation
+    Alert.alert('Google Sign-In', 'Integrando com Google...');
+  };
+
+  const handleFacebookLogin = async () => {
+    // Placeholder for Facebook OAuth implementation
+    Alert.alert('Facebook Sign-In', 'Integrando com Facebook...');
+  };
+
+  const handleInstagramLogin = async () => {
+    // Placeholder for Instagram OAuth implementation
+    Alert.alert('Instagram Sign-In', 'Integrando com Instagram...');
+  };
+
+  const handleAppleLogin = async () => {
+    // Placeholder for Apple Sign-In implementation
+    Alert.alert('Apple Sign-In', 'Integrando com Apple...');
+  };
+
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <StatusBar style="dark" />
-      
-      <TouchableOpacity 
-        style={styles.backButton}
-        onPress={() => navigation.goBack()}
-      >
-        <Text style={styles.backText}>← Voltar</Text>
-      </TouchableOpacity>
 
-      <View style={styles.content}>
-        <Text style={styles.title}>Bem-vindo de volta! 👋</Text>
-        <Text style={styles.subtitle}>Entre para continuar</Text>
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
+          <Text style={styles.backText}>← Voltar</Text>
+        </TouchableOpacity>
 
-        <View style={styles.form}>
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
+        <View style={styles.content}>
+          <Text style={styles.title}>Bem-vindo de volta! 👋</Text>
+          <Text style={styles.subtitle}>Entre para continuar</Text>
 
-          <TextInput
-            style={styles.input}
-            placeholder="Senha"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
+          <View style={styles.form}>
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              placeholderTextColor="#999"
+            />
 
-          <TouchableOpacity 
-            style={styles.button}
-            onPress={handleLogin}
-            disabled={loading}
-          >
-            <Text style={styles.buttonText}>
-              {loading ? 'Entrando...' : 'Entrar'}
-            </Text>
-          </TouchableOpacity>
+            <TextInput
+              style={styles.input}
+              placeholder="Senha"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              placeholderTextColor="#999"
+            />
 
-          <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-            <Text style={styles.linkText}>
-              Não tem uma conta? <Text style={styles.linkBold}>Cadastre-se</Text>
-            </Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={handleLogin}
+              disabled={loading}
+            >
+              <Text style={styles.buttonText}>
+                {loading ? 'Entrando...' : 'Entrar'}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+              <Text style={styles.linkText}>
+                Não tem uma conta? <Text style={styles.linkBold}>Cadastre-se</Text>
+              </Text>
+            </TouchableOpacity>
+
+            <SocialAuthButtons
+              onGooglePress={handleGoogleLogin}
+              onFacebookPress={handleFacebookLogin}
+              onInstagramPress={handleInstagramLogin}
+              onApplePress={handleAppleLogin}
+            />
+          </View>
         </View>
-      </View>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 };
