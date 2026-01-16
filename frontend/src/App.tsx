@@ -4,13 +4,19 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthProvider } from './context/AuthContext';
 import { AppNavigator } from './navigation/AppNavigator';
 
+function NavigationApp() {
+  return (
+    <NavigationContainer>
+      <AppNavigator />
+    </NavigationContainer>
+  );
+}
+
 function AppRoot() {
   return (
     <SafeAreaProvider>
       <AuthProvider>
-        <NavigationContainer>
-          <AppNavigator />
-        </NavigationContainer>
+        <NavigationApp />
       </AuthProvider>
     </SafeAreaProvider>
   );
