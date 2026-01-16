@@ -60,9 +60,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FF6B6B',
-    alignItems: 'center',
-    justifyContent: 'center',
+  },
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: 'space-between',
     padding: 20,
+    paddingBottom: 30,
+  },
+  header: {
+    alignItems: 'center',
+    marginTop: 60,
+  },
+  logo: {
+    fontSize: 64,
+    marginBottom: 16,
   },
   title: {
     fontSize: 48,
@@ -71,20 +82,49 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: 18,
     color: '#fff',
-    opacity: 0.9,
-    marginBottom: 60,
+    opacity: 0.95,
+    marginBottom: 40,
+    textAlign: 'center',
   },
-  buttons: {
+  features: {
     width: '100%',
     gap: 16,
+    marginBottom: 40,
+  },
+  featureItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    gap: 12,
+  },
+  featureEmoji: {
+    fontSize: 24,
+  },
+  featureText: {
+    flex: 1,
+    fontSize: 14,
+    color: '#fff',
+    fontWeight: '500',
+  },
+  buttons: {
+    gap: 16,
+    width: '100%',
   },
   buttonPrimary: {
     backgroundColor: '#fff',
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 5,
   },
   buttonTextPrimary: {
     color: '#FF6B6B',
