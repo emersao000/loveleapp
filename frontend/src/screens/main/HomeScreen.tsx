@@ -514,97 +514,100 @@ export const HomeScreen = () => {
     <View style={styles.container}>
       <StatusBar style="dark" />
 
-      {/* Safe Area para Header */}
-      <SafeAreaView style={styles.safeAreaTop}>
-        {/* Header */}
-        <View style={styles.header}>
-          <View style={styles.logoContainer}>
-            <LoveleLogo size={36} />
-            <Text style={styles.logoText}>Lovele</Text>
-          </View>
-
-          <TouchableOpacity style={styles.iconBtn}>
-            <View style={styles.notifBadge}>
-              <Text style={styles.notifBadgeText}>3</Text>
+      <View style={styles.mainContent}>
+        {/* Safe Area para Header */}
+        <SafeAreaView style={styles.safeAreaTop} edges={['top']}>
+          {/* Header */}
+          <View style={styles.header}>
+            <View style={styles.logoContainer}>
+              <LoveleLogo size={36} />
+              <Text style={styles.logoText}>Lovele</Text>
             </View>
-            <Ionicons name="notifications-outline" size={26} color="#1A1A1A" />
-          </TouchableOpacity>
-        </View>
 
-        {/* Filter Tabs */}
-        <View style={styles.filterContainer}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.filterScroll}
-          >
-            <TouchableOpacity
-              style={[styles.filterTab, feedFilter === 'todos' && styles.filterTabActive]}
-              onPress={() => setFeedFilter('todos')}
-            >
-              <Text style={[styles.filterText, feedFilter === 'todos' && styles.filterTextActive]}>
-                Todos
-              </Text>
-              {feedFilter === 'todos' && <View style={styles.filterIndicator} />}
+            <TouchableOpacity style={styles.iconBtn}>
+              <View style={styles.notifBadge}>
+                <Text style={styles.notifBadgeText}>3</Text>
+              </View>
+              <Ionicons name="notifications-outline" size={26} color="#1A1A1A" />
             </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.filterTab, feedFilter === 'momentos' && styles.filterTabActive]}
-              onPress={() => setFeedFilter('momentos')}
-            >
-              <Ionicons
-                name="time-outline"
-                size={16}
-                color={feedFilter === 'momentos' ? '#FF6B9D' : '#8E8E93'}
-                style={{ marginRight: 6 }}
-              />
-              <Text style={[styles.filterText, feedFilter === 'momentos' && styles.filterTextActive]}>
-                Momentos
-              </Text>
-              {feedFilter === 'momentos' && <View style={styles.filterIndicator} />}
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.filterTab, feedFilter === 'recados' && styles.filterTabActive]}
-              onPress={() => setFeedFilter('recados')}
-            >
-              <Ionicons
-                name="chatbubble-ellipses-outline"
-                size={16}
-                color={feedFilter === 'recados' ? '#FF6B9D' : '#8E8E93'}
-                style={{ marginRight: 6 }}
-              />
-              <Text style={[styles.filterText, feedFilter === 'recados' && styles.filterTextActive]}>
-                Recados
-              </Text>
-              {feedFilter === 'recados' && <View style={styles.filterIndicator} />}
-            </TouchableOpacity>
-          </ScrollView>
-        </View>
-      </SafeAreaView>
-
-      {/* Feed */}
-      <FlatList
-        data={getFilteredData()}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        showsVerticalScrollIndicator={false}
-        refreshing={refreshing}
-        onRefresh={onRefresh}
-        contentContainerStyle={styles.feedList}
-        ListEmptyComponent={
-          <View style={styles.emptyState}>
-            <Ionicons
-              name={feedFilter === 'momentos' ? 'time-outline' : 'chatbubble-ellipses-outline'}
-              size={64}
-              color="#DBDBDB"
-            />
-            <Text style={styles.emptyText}>
-              {feedFilter === 'momentos' ? 'Nenhum momento por aqui ainda' : 'Nenhum recado por aqui ainda'}
-            </Text>
           </View>
-        }
-      />
+
+          {/* Filter Tabs */}
+          <View style={styles.filterContainer}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.filterScroll}
+            >
+              <TouchableOpacity
+                style={[styles.filterTab, feedFilter === 'todos' && styles.filterTabActive]}
+                onPress={() => setFeedFilter('todos')}
+              >
+                <Text style={[styles.filterText, feedFilter === 'todos' && styles.filterTextActive]}>
+                  Todos
+                </Text>
+                {feedFilter === 'todos' && <View style={styles.filterIndicator} />}
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.filterTab, feedFilter === 'momentos' && styles.filterTabActive]}
+                onPress={() => setFeedFilter('momentos')}
+              >
+                <Ionicons
+                  name="time-outline"
+                  size={16}
+                  color={feedFilter === 'momentos' ? '#FF6B9D' : '#8E8E93'}
+                  style={{ marginRight: 6 }}
+                />
+                <Text style={[styles.filterText, feedFilter === 'momentos' && styles.filterTextActive]}>
+                  Momentos
+                </Text>
+                {feedFilter === 'momentos' && <View style={styles.filterIndicator} />}
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.filterTab, feedFilter === 'recados' && styles.filterTabActive]}
+                onPress={() => setFeedFilter('recados')}
+              >
+                <Ionicons
+                  name="chatbubble-ellipses-outline"
+                  size={16}
+                  color={feedFilter === 'recados' ? '#FF6B9D' : '#8E8E93'}
+                  style={{ marginRight: 6 }}
+                />
+                <Text style={[styles.filterText, feedFilter === 'recados' && styles.filterTextActive]}>
+                  Recados
+                </Text>
+                {feedFilter === 'recados' && <View style={styles.filterIndicator} />}
+              </TouchableOpacity>
+            </ScrollView>
+          </View>
+        </SafeAreaView>
+
+        {/* Feed */}
+        <FlatList
+          data={getFilteredData()}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          showsVerticalScrollIndicator={false}
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          contentContainerStyle={styles.feedList}
+          style={styles.flatList}
+          ListEmptyComponent={
+            <View style={styles.emptyState}>
+              <Ionicons
+                name={feedFilter === 'momentos' ? 'time-outline' : 'chatbubble-ellipses-outline'}
+                size={64}
+                color="#DBDBDB"
+              />
+              <Text style={styles.emptyText}>
+                {feedFilter === 'momentos' ? 'Nenhum momento por aqui ainda' : 'Nenhum recado por aqui ainda'}
+              </Text>
+            </View>
+          }
+        />
+      </View>
 
       {/* Bottom Navigation */}
       <SafeAreaView style={styles.safeAreaBottom} edges={['bottom']}>
