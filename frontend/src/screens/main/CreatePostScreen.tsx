@@ -132,49 +132,153 @@ export const CreatePostScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#F8F9FA',
+  },
+  safeAreaTop: {
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#DBDBDB',
   },
   header: {
-    paddingTop: 16,
     paddingHorizontal: 16,
-    paddingBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E5E5',
+    paddingVertical: 12,
   },
   headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#000',
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#1A1A1A',
+  },
+  headerSubtitle: {
+    fontSize: 14,
+    color: '#8E8E93',
+    marginTop: 4,
   },
   content: {
     flex: 1,
-    padding: 16,
   },
-  postContainer: {
+
+  // === PRIVACY BANNER ===
+  privacyBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 16,
+    marginTop: 16,
     marginBottom: 16,
+    backgroundColor: '#FFF9FB',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#FFE4F0',
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    gap: 12,
+  },
+  privacyIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 8,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  privacyText: {
+    flex: 1,
+  },
+  privacyLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#1A1A1A',
+  },
+  privacyDesc: {
+    fontSize: 12,
+    color: '#8E8E93',
+    marginTop: 2,
+  },
+
+  // === AUTHOR SECTION ===
+  authorSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#DBDBDB',
+    gap: 12,
+  },
+  authorAvatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+  },
+  authorName: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#1A1A1A',
+  },
+  authorUsername: {
+    fontSize: 13,
+    color: '#8E8E93',
+    marginTop: 2,
+  },
+
+  // === POST CONTAINER ===
+  postContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#DBDBDB',
   },
   textInput: {
-    borderWidth: 1,
-    borderColor: '#E5E5E5',
-    borderRadius: 12,
-    padding: 16,
     fontSize: 16,
+    color: '#1A1A1A',
     minHeight: 200,
     textAlignVertical: 'top',
   },
+
+  // === ACTION BUTTONS ===
+  actionButtons: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#DBDBDB',
+    gap: 12,
+  },
+  actionBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    borderRadius: 8,
+    backgroundColor: '#F8F9FA',
+    gap: 8,
+  },
+  actionBtnText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#8E8E93',
+  },
+
+  // === PUBLISH BUTTON ===
   postButton: {
-    backgroundColor: '#FF6B6B',
+    backgroundColor: '#FF6B9D',
     paddingVertical: 14,
     borderRadius: 12,
     alignItems: 'center',
-    marginTop: 8,
+    marginHorizontal: 16,
+    marginTop: 16,
+    marginBottom: 20,
   },
   postButtonDisabled: {
-    opacity: 0.5,
+    opacity: 0.6,
+    backgroundColor: '#FFB8D1',
   },
   postButtonText: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '700',
   },
 });
