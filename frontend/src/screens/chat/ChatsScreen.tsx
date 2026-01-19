@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -7,10 +7,8 @@ import {
   SafeAreaView,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { BottomNavigation } from '@/components/common/BottomNavigation';
 
 export const ChatsScreen = () => {
-  const [activeTab, setActiveTab] = useState('messages');
 
   return (
     <View style={styles.container}>
