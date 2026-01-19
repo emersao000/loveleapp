@@ -11,7 +11,6 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import { usePostPrivacy, PrivacyLevel } from '@/context/PostPrivacyContext';
-import { BottomNavigation } from '@/components/common/BottomNavigation';
 
 const PRIVACY_OPTIONS = [
   {
