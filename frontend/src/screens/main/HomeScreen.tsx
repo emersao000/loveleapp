@@ -652,6 +652,36 @@ export const HomeScreen = () => {
           </View>
         </TouchableOpacity>
       </View>
+
+      {/* Modal para Post Detalhado */}
+      <Modal
+        visible={showPostDetail}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowPostDetail(false)}
+      >
+        <SafeAreaView style={styles.modalContainer}>
+          <View style={styles.modalHeader}>
+            <TouchableOpacity
+              onPress={() => setShowPostDetail(false)}
+              style={styles.closeBtn}
+            >
+              <Ionicons name="close" size={24} color="#1A1A1A" />
+            </TouchableOpacity>
+          </View>
+          {selectedPost && (
+            <PostDetail
+              post={selectedPost}
+              onLike={handleLike}
+              onComment={(id) => console.log('Comentar em:', id)}
+              onShare={(id) => console.log('Compartilhar:', id)}
+              onSave={handleSave}
+              variant="fullscreen"
+              showFullContent={true}
+            />
+          )}
+        </SafeAreaView>
+      </Modal>
     </View>
   );
 };
