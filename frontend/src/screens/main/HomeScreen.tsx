@@ -448,6 +448,7 @@ const RecadoCard = ({ item, onLike }: any) => {
 // 🏠 TELA PRINCIPAL
 // ==========================================
 export const HomeScreen = () => {
+  const navigation = useNavigation<any>();
   const [feedFilter, setFeedFilter] = useState('todos');
   const [feedData, setFeedData] = useState(FEED_DATA);
   const [refreshing, setRefreshing] = useState(false);
