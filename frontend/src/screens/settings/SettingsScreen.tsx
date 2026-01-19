@@ -34,7 +34,6 @@ const PRIVACY_OPTIONS = [
 ];
 
 export const SettingsScreen = () => {
-  const [activeTab, setActiveTab] = useState('settings');
   const { defaultPrivacy, setDefaultPrivacy } = usePostPrivacy();
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
 
