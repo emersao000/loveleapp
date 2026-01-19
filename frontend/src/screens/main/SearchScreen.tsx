@@ -26,11 +26,6 @@ export const SearchScreen = () => {
           <Text style={styles.emptySubtitle}>Digite algo para começar</Text>
         </View>
       </ScrollView>
-
-      <BottomNavigation
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-      />
     </View>
   );
 };
