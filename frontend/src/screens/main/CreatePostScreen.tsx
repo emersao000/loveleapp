@@ -120,6 +120,26 @@ export const CreatePostScreen = () => {
           </Text>
         </TouchableOpacity>
       </ScrollView>
+
+      <BottomNavigation
+        activeTab="create"
+        onTabChange={(tab) => {
+          switch (tab) {
+            case 'home':
+              navigation.navigate('Home');
+              break;
+            case 'search':
+              navigation.navigate('Search');
+              break;
+            case 'messages':
+              navigation.navigate('Chat');
+              break;
+            case 'profile':
+              navigation.navigate('Profile');
+              break;
+          }
+        }}
+      />
     </View>
   );
 };
