@@ -489,19 +489,12 @@ export const HomeScreen = () => {
     setShowPostDetail(true);
   };
 
-  const handleCreatePost = (postType: PostType, privacy: PrivacyLevel) => {
+  const handleCreatePost = (postType: PostType) => {
     setSelectedPostType(postType);
-    setSelectedPrivacy(privacy);
     setShowCreateModal(false);
 
-    // Navegar para tela de criar post
-    // Por enquanto, apenas mostramos as informações selecionadas
-    console.log(`Criando ${postType} com privacidade: ${privacy}`);
-
-    // Aqui você pode:
-    // - Navegar para uma tela de criação de post
-    // - Abrir um modal de criação de post
-    // - Chamar uma ação de contexto
+    // Aqui você pode navegar para tela de criar post com o tipo selecionado
+    console.log(`Navegando para criar ${postType}`);
   };
 
   const getFilteredData = () => {
