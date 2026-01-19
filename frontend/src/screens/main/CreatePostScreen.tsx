@@ -8,16 +8,13 @@ import {
   ScrollView,
   SafeAreaView,
   Image,
-  Platform,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
-import { BottomNavigation } from '@/components/common/BottomNavigation';
 import { usePostPrivacy } from '@/context/PostPrivacyContext';
 
 export const CreatePostScreen = () => {
   const [postText, setPostText] = useState('');
-  const [activeTab, setActiveTab] = useState('create');
   const { defaultPrivacy } = usePostPrivacy();
 
   const handlePost = () => {
