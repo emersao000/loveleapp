@@ -117,11 +117,6 @@ export const CreatePostScreen = () => {
           </Text>
         </TouchableOpacity>
       </ScrollView>
-
-      <BottomNavigation
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-      />
     </View>
   );
 };
