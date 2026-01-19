@@ -455,7 +455,6 @@ export const HomeScreen = () => {
   const [showPostDetail, setShowPostDetail] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedPostType, setSelectedPostType] = useState<PostType | null>(null);
-  const [selectedPrivacy, setSelectedPrivacy] = useState<PrivacyLevel | null>(null);
 
   const handleLike = (postId: string) => {
     setFeedData((prev) =>
