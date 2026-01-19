@@ -4,11 +4,7 @@ import { useAuth } from '../hooks/useAuth';
 import { WelcomeScreen } from '../screens/auth/WelcomeScreen';
 import { LoginScreen } from '../screens/auth/LoginScreen';
 import { RegisterScreen } from '../screens/auth/RegisterScreen';
-import { HomeScreen } from '../screens/main/HomeScreen';
-import { SearchScreen } from '../screens/main/SearchScreen';
-import { CreatePostScreen } from '../screens/main/CreatePostScreen';
-import { ChatsScreen } from '../screens/chat/ChatsScreen';
-import { ProfileScreen } from '../screens/profile/ProfileScreen';
+import { MainTabNavigator } from './MainTabNavigator';
 import { SettingsScreen } from '../screens/settings/SettingsScreen';
 
 const Stack = createNativeStackNavigator();
@@ -36,31 +32,10 @@ export const AppNavigator = () => {
   }
 
   return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-        animationEnabled: false,
-      }}
-    >
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen
-        name="Home"
-        component={HomeScreen}
-      />
-      <Stack.Screen
-        name="Search"
-        component={SearchScreen}
-      />
-      <Stack.Screen
-        name="Create"
-        component={CreatePostScreen}
-      />
-      <Stack.Screen
-        name="Chat"
-        component={ChatsScreen}
-      />
-      <Stack.Screen
-        name="Profile"
-        component={ProfileScreen}
+        name="MainTabs"
+        component={MainTabNavigator}
       />
       <Stack.Screen
         name="Settings"
