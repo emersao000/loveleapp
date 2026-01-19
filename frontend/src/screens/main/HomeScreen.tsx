@@ -479,6 +479,11 @@ export const HomeScreen = () => {
     setTimeout(() => setRefreshing(false), 1500);
   };
 
+  const handleOpenPostDetail = (post: any) => {
+    setSelectedPost(post);
+    setShowPostDetail(true);
+  };
+
   const getFilteredData = () => {
     if (feedFilter === 'momentos') {
       return feedData.filter((item) => item.type === 'momento');
