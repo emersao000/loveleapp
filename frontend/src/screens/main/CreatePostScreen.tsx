@@ -34,7 +34,7 @@ export const CreatePostScreen = () => {
           />
         </View>
 
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[styles.postButton, !postText.trim() && styles.postButtonDisabled]}
           onPress={handlePost}
           disabled={!postText.trim()}
@@ -42,6 +42,11 @@ export const CreatePostScreen = () => {
           <Text style={styles.postButtonText}>Publicar</Text>
         </TouchableOpacity>
       </ScrollView>
+
+      <BottomNavigation
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      />
     </View>
   );
 };
