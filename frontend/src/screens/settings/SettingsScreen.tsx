@@ -220,11 +220,6 @@ export const SettingsScreen = () => {
           </ScrollView>
         </SafeAreaView>
       </Modal>
-
-      <BottomNavigation
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-      />
     </View>
   );
 };
