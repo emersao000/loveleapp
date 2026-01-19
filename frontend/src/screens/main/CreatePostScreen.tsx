@@ -9,11 +9,14 @@ import {
   SafeAreaView,
   Image,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import { usePostPrivacy } from '@/context/PostPrivacyContext';
+import { BottomNavigation } from '@/components/common/BottomNavigation';
 
 export const CreatePostScreen = () => {
+  const navigation = useNavigation<any>();
   const [postText, setPostText] = useState('');
   const { defaultPrivacy } = usePostPrivacy();
 
