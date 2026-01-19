@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { BottomNavigation } from '@/components/common/BottomNavigation';
 
 export const CreatePostScreen = () => {
   const [postText, setPostText] = useState('');
+  const [activeTab, setActiveTab] = useState('create');
 
   const handlePost = () => {
     if (postText.trim()) {
