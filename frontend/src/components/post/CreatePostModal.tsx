@@ -134,22 +134,20 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({
     >
       <SafeAreaView style={styles.container}>
         {/* Header com Close */}
-        {step === 'type' && (
-          <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>Criar Post</Text>
-            <TouchableOpacity
-              onPress={handleClose}
-              style={styles.closeButton}
-              activeOpacity={0.7}
-            >
-              <Ionicons name="close" size={24} color="#1A1A1A" />
-            </TouchableOpacity>
-          </View>
-        )}
+        <View style={styles.modalHeader}>
+          <Text style={styles.modalTitle}>Criar Post</Text>
+          <TouchableOpacity
+            onPress={handleClose}
+            style={styles.closeButton}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="close" size={24} color="#1A1A1A" />
+          </TouchableOpacity>
+        </View>
 
         {/* Content */}
         <View style={styles.modalContent}>
-          {step === 'type' ? renderTypeSelection() : renderPrivacySelection()}
+          {renderTypeSelection()}
         </View>
       </SafeAreaView>
     </Modal>
