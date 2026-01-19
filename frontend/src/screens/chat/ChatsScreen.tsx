@@ -27,11 +27,6 @@ export const ChatsScreen = () => {
           <Text style={styles.emptySubtitle}>Comece uma conversa com alguém</Text>
         </View>
       </ScrollView>
-
-      <BottomNavigation
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-      />
     </View>
   );
 };
