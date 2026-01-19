@@ -1135,7 +1135,7 @@ const styles = StyleSheet.create({
   bottomNav: {
     flexDirection: 'row',
     paddingTop: 8,
-    paddingBottom: 8,
+    paddingBottom: Platform.OS === 'ios' ? 32 : 20,
     paddingHorizontal: 0,
   },
   navBtn: {
