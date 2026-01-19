@@ -23,7 +23,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
   userAvatar = 'https://i.pravatar.cc/100?img=8',
 }) => {
   return (
-    <SafeAreaView style={styles.safeAreaBottom} edges={['bottom']}>
+    <SafeAreaView style={styles.safeAreaBottom} edges={['left', 'right']}>
       <View style={styles.bottomNav}>
         <TouchableOpacity
           style={styles.navBtn}
