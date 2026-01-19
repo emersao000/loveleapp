@@ -1,9 +1,12 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import { useAuth } from '../../hooks/useAuth';
+import { BottomNavigation } from '@/components/common/BottomNavigation';
 
 export const ProfileScreen = () => {
+  const navigation = useNavigation<any>();
   const { user, logout } = useAuth();
 
   return (
@@ -43,6 +46,26 @@ export const ProfileScreen = () => {
           <Text style={styles.logoutButtonText}>Sair</Text>
         </TouchableOpacity>
       </ScrollView>
+
+      <BottomNavigation
+        activeTab="profile"
+        onTabChange={(tab) => {
+          switch (tab) {
+            case 'home':
+              navigation.navigate('Home');
+              break;
+            case 'search':
+              navigation.navigate('Search');
+              break;
+            case 'messages':
+              navigation.navigate('Chat');
+              break;
+            case 'profile':
+              navigation.navigate('Profile');
+              break;
+          }
+        }}
+      />
     </View>
   );
 };

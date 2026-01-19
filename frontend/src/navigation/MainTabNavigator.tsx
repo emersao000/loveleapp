@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { HomeScreen } from '../screens/main/HomeScreen';
 import { SearchScreen } from '../screens/main/SearchScreen';
 import { CreatePostScreen } from '../screens/main/CreatePostScreen';
-import { ChatScreen } from '../screens/chat/ChatScreen';
+import { ChatsScreen } from '../screens/chat/ChatsScreen';
 import { ProfileScreen } from '../screens/profile/ProfileScreen';
 
 const Tab = createBottomTabNavigator();
@@ -50,9 +50,9 @@ export const MainTabNavigator = () => {
         component={CreatePostScreen}
         options={{ tabBarLabel: 'Criar' }}
       />
-      <Tab.Screen 
-        name="Chat" 
-        component={ChatScreen}
+      <Tab.Screen
+        name="Chat"
+        component={ChatsScreen}
         options={{ tabBarLabel: 'Mensagens' }}
       />
       <Tab.Screen 

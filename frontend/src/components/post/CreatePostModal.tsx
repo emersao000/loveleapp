@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import { usePostPrivacy } from '@/context/PostPrivacyContext';
 
 const { height } = Dimensions.get('window');
 
@@ -19,12 +20,11 @@ const { height } = Dimensions.get('window');
 // ==========================================
 
 export type PostType = 'momento' | 'recado';
-export type PrivacyLevel = 'publico' | 'amigos' | 'privado';
 
 export interface CreatePostModalProps {
   visible: boolean;
   onClose: () => void;
-  onSelectType: (type: PostType, privacy: PrivacyLevel) => void;
+  onSelectType: (type: PostType) => void;
 }
 
 interface PostTypeOption {
@@ -33,13 +33,6 @@ interface PostTypeOption {
   description: string;
   icon: string;
   colors: [string, string];
-}
-
-interface PrivacyOption {
-  id: PrivacyLevel;
-  label: string;
-  description: string;
-  icon: string;
 }
 
 // ==========================================
@@ -63,27 +56,6 @@ const POST_TYPES: PostTypeOption[] = [
   },
 ];
 
-const PRIVACY_OPTIONS: PrivacyOption[] = [
-  {
-    id: 'publico',
-    label: 'Público',
-    description: 'Todos podem ver',
-    icon: 'globe-outline',
-  },
-  {
-    id: 'amigos',
-    label: 'Amigos',
-    description: 'Apenas seus amigos',
-    icon: 'people-outline',
-  },
-  {
-    id: 'privado',
-    label: 'Privado',
-    description: 'Apenas você',
-    icon: 'lock-closed-outline',
-  },
-];
-
 // ==========================================
 // 🎨 COMPONENTE PRINCIPAL
 // ==========================================
@@ -93,34 +65,15 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({
   onClose,
   onSelectType,
 }) => {
-  const [selectedType, setSelectedType] = useState<PostType>('momento');
-  const [selectedPrivacy, setSelectedPrivacy] = useState<PrivacyLevel>('publico');
-  const [step, setStep] = useState<'type' | 'privacy'>('type');
+  const { defaultPrivacy } = usePostPrivacy();
 
   const handleTypeSelect = (type: PostType) => {
-    setSelectedType(type);
-    setStep('privacy');
-  };
-
-  const handlePrivacySelect = (privacy: PrivacyLevel) => {
-    setSelectedPrivacy(privacy);
-    onSelectType(selectedType, privacy);
-    resetModal();
-  };
-
-  const handleClose = () => {
-    resetModal();
+    onSelectType(type);
     onClose();
   };
 
-  const resetModal = () => {
-    setStep('type');
-    setSelectedType('momento');
-    setSelectedPrivacy('publico');
-  };
-
-  const handleBack = () => {
-    setStep('type');
+  const handleClose = () => {
+    onClose();
   };
 
   // ==========================================
@@ -171,88 +124,6 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({
     </View>
   );
 
-  const renderPrivacySelection = () => {
-    const selectedPostType = POST_TYPES.find((t) => t.id === selectedType);
-
-    return (
-      <View style={styles.stepContainer}>
-        <View style={styles.stepHeader}>
-          <TouchableOpacity
-            onPress={handleBack}
-            style={styles.backButton}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="chevron-back" size={24} color="#1A1A1A" />
-          </TouchableOpacity>
-
-          <View style={styles.headerText}>
-            <Text style={styles.stepTitle}>Privacidade</Text>
-            <Text style={styles.stepSubtitle}>Quem pode ver seu {selectedPostType?.label.toLowerCase()}?</Text>
-          </View>
-        </View>
-
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.privacyOptionsContainer}
-        >
-          {PRIVACY_OPTIONS.map((privacyOption) => (
-            <TouchableOpacity
-              key={privacyOption.id}
-              onPress={() => handlePrivacySelect(privacyOption.id)}
-              activeOpacity={0.7}
-              style={[
-                styles.privacyCard,
-                selectedPrivacy === privacyOption.id && styles.privacyCardSelected,
-              ]}
-            >
-              <View style={styles.privacyCardContent}>
-                <View style={styles.privacyIconContainer}>
-                  <Ionicons
-                    name={privacyOption.icon as any}
-                    size={28}
-                    color={selectedPrivacy === privacyOption.id ? '#FF6B9D' : '#8E8E93'}
-                  />
-                </View>
-
-                <View style={styles.privacyTextContainer}>
-                  <Text
-                    style={[
-                      styles.privacyLabel,
-                      selectedPrivacy === privacyOption.id && styles.privacyLabelSelected,
-                    ]}
-                  >
-                    {privacyOption.label}
-                  </Text>
-                  <Text
-                    style={[
-                      styles.privacyDescription,
-                      selectedPrivacy === privacyOption.id && styles.privacyDescriptionSelected,
-                    ]}
-                  >
-                    {privacyOption.description}
-                  </Text>
-                </View>
-
-                {selectedPrivacy === privacyOption.id && (
-                  <View style={styles.privacyCheckmark}>
-                    <Ionicons name="checkmark-circle" size={24} color="#FF6B9D" />
-                  </View>
-                )}
-              </View>
-            </TouchableOpacity>
-          ))}
-
-          <TouchableOpacity
-            onPress={handleClose}
-            style={styles.cancelButton}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.cancelButtonText}>Cancelar</Text>
-          </TouchableOpacity>
-        </ScrollView>
-      </View>
-    );
-  };
 
   return (
     <Modal
@@ -263,22 +134,20 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({
     >
       <SafeAreaView style={styles.container}>
         {/* Header com Close */}
-        {step === 'type' && (
-          <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>Criar Post</Text>
-            <TouchableOpacity
-              onPress={handleClose}
-              style={styles.closeButton}
-              activeOpacity={0.7}
-            >
-              <Ionicons name="close" size={24} color="#1A1A1A" />
-            </TouchableOpacity>
-          </View>
-        )}
+        <View style={styles.modalHeader}>
+          <Text style={styles.modalTitle}>Criar Post</Text>
+          <TouchableOpacity
+            onPress={handleClose}
+            style={styles.closeButton}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="close" size={24} color="#1A1A1A" />
+          </TouchableOpacity>
+        </View>
 
         {/* Content */}
         <View style={styles.modalContent}>
-          {step === 'type' ? renderTypeSelection() : renderPrivacySelection()}
+          {renderTypeSelection()}
         </View>
       </SafeAreaView>
     </Modal>
@@ -334,19 +203,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 0.5,
     borderBottomColor: '#DBDBDB',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  headerText: {
-    flex: 1,
   },
   stepTitle: {
     fontSize: 18,
@@ -411,81 +267,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  // === PRIVACY SELECTION ===
-  privacyOptionsContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    gap: 12,
-    paddingBottom: 20,
-  },
-  privacyCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: '#DBDBDB',
-    overflow: 'hidden',
-  },
-  privacyCardSelected: {
-    borderColor: '#FF6B9D',
-    backgroundColor: '#FFF9FB',
-  },
-  privacyCardContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    gap: 12,
-  },
-  privacyIconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
-    backgroundColor: '#F0F0F0',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  privacyTextContainer: {
-    flex: 1,
-  },
-  privacyLabel: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#1A1A1A',
-    marginBottom: 3,
-  },
-  privacyLabelSelected: {
-    color: '#FF6B9D',
-    fontWeight: '700',
-  },
-  privacyDescription: {
-    fontSize: 12,
-    color: '#8E8E93',
-  },
-  privacyDescriptionSelected: {
-    color: '#FF6B9D',
-    fontWeight: '500',
-  },
-  privacyCheckmark: {
-    width: 32,
-    height: 32,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  // === BUTTONS ===
-  cancelButton: {
-    marginTop: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: '#DBDBDB',
-    alignItems: 'center',
-  },
-  cancelButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#1A1A1A',
-  },
 });
