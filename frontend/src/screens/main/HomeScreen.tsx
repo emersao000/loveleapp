@@ -449,6 +449,8 @@ export const HomeScreen = () => {
   const [feedFilter, setFeedFilter] = useState('todos');
   const [feedData, setFeedData] = useState(FEED_DATA);
   const [refreshing, setRefreshing] = useState(false);
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+  const [showPostDetail, setShowPostDetail] = useState(false);
 
   const handleLike = (postId: string) => {
     setFeedData((prev) =>
