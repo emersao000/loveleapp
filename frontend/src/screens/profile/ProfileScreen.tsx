@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useAuth } from '../../hooks/useAuth';
+import { BottomNavigation } from '@/components/common/BottomNavigation';
 
 export const ProfileScreen = () => {
   const { user, logout } = useAuth();
+  const [activeTab, setActiveTab] = useState('profile');
 
   return (
     <View style={styles.container}>
