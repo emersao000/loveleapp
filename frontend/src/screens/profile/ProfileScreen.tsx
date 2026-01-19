@@ -1,9 +1,12 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import { useAuth } from '../../hooks/useAuth';
+import { BottomNavigation } from '@/components/common/BottomNavigation';
 
 export const ProfileScreen = () => {
+  const navigation = useNavigation<any>();
   const { user, logout } = useAuth();
 
   return (
